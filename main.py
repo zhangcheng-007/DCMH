@@ -239,14 +239,14 @@ def split_data(images, tags, labels):
     X['retrieval'] = images[opt.query_size: opt.query_size + opt.database_size]
 
     Y = {}
-    Y['query'] = tags[0: opt.query_size]
-    Y['train'] = tags[opt.query_size: opt.training_size + opt.query_size]
-    Y['retrieval'] = tags[opt.query_size: opt.query_size + opt.database_size]
+    Y['query'] = tags[:,0: opt.query_size]
+    Y['train'] = tags[:,opt.query_size: opt.training_size + opt.query_size]
+    Y['retrieval'] = tags[:,opt.query_size: opt.query_size + opt.database_size]
 
     L = {}
-    L['query'] = labels[0: opt.query_size]
-    L['train'] = labels[opt.query_size: opt.training_size + opt.query_size]
-    L['retrieval'] = labels[opt.query_size: opt.query_size + opt.database_size]
+    L['query'] = labels[:,0: opt.query_size]
+    L['train'] = labels[:,opt.query_size: opt.training_size + opt.query_size]
+    L['retrieval'] = labels[:,opt.query_size: opt.query_size + opt.database_size]
 
     return X, Y, L
 
