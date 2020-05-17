@@ -4,7 +4,7 @@ import scipy.io as scio
 
 def load_data(path):
     file = h5py.File(path)
-    images = file['images'][:].astype('float')
+    images = file['IAll'][:]
     labels = file['LAll'][:]
     tags = file['YAll'][:]
 
