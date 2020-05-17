@@ -6,8 +6,8 @@ class DefaultConfig(object):
     load_txt_path = None
 
     # data parameters
-    data_path = './data/FLICKR-25K.mat'
-    pretrain_model_path = './data/imagenet-vgg-f.mat'
+    data_path = '/content/mirflickr25k.mat'
+    pretrain_model_path = '/content/imagenet-vgg-f.mat'
     training_size = 10000
     query_size = 2000
     database_size = 18015
