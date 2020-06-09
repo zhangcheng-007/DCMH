@@ -22,10 +22,8 @@ def train(**kwargs):
 
     img_model = ImgModule(opt.bit, pretrain_model)
     txt_model = TxtModule(y_dim, opt.bit)
-
-    if opt.use_gpu:
-        img_model = img_model.cuda()
-        txt_model = txt_model.cuda()
+    img_model = img_model.cuda()
+    txt_model = txt_model.cuda()
 
     train_L = torch.from_numpy(L['train'])
     train_x = torch.from_numpy(X['train'])
@@ -44,10 +42,9 @@ def train(**kwargs):
     F_buffer = torch.randn(num_train, opt.bit)
     G_buffer = torch.randn(num_train, opt.bit)
 
-    if opt.use_gpu:
-        train_L = train_L.cuda()
-        F_buffer = F_buffer.cuda()
-        G_buffer = G_buffer.cuda()
+    train_L = train_L.cuda()
+    F_buffer = F_buffer.cuda()
+    G_buffer = G_buffer.cuda()
 
     Sim = calc_neighbor(train_L, train_L)
     B = torch.sign(F_buffer + G_buffer)
@@ -78,11 +75,10 @@ def train(**kwargs):
 
             sample_L = Variable(train_L[ind, :])
             image = Variable(train_x[ind].type(torch.float))
-            if opt.use_gpu:
-                image = image.cuda()
-                sample_L = sample_L.cuda()
-                ones = ones.cuda()
-                ones_ = ones_.cuda()
+            image = image.cuda()
+            sample_L = sample_L.cuda()
+            ones = ones.cuda()
+            ones_ = ones_.cuda()
 
             # similar matrix size: (batch_size, num_train)
             S = calc_neighbor(sample_L, train_L)  # S: (batch_size, num_train)
@@ -111,9 +107,8 @@ def train(**kwargs):
             sample_L = Variable(train_L[ind, :])
             text = train_y[ind, :].unsqueeze(1).unsqueeze(-1).type(torch.float)
             text = Variable(text)
-            if opt.use_gpu:
-                text = text.cuda()
-                sample_L = sample_L.cuda()
+            text = text.cuda()
+            sample_L = sample_L.cuda()
 
             # similar matrix size: (batch_size, num_train)
             S = calc_neighbor(sample_L, train_L)  # S: (batch_size, num_train)
@@ -206,9 +201,8 @@ def test(**kwargs):
     if opt.load_txt_path:
         txt_model.load(opt.load_txt_path)
 
-    if opt.use_gpu:
-        img_model = img_model.cuda()
-        txt_model = txt_model.cuda()
+    img_model = img_model.cuda()
+    txt_model = txt_model.cuda()
 
     query_L = torch.from_numpy(L['query'])
     query_x = torch.from_numpy(X['query'])
@@ -223,9 +217,9 @@ def test(**kwargs):
     rBX = generate_image_code(img_model, retrieval_x, opt.bit)
     rBY = generate_text_code(txt_model, retrieval_y, opt.bit)
 
-    if opt.use_gpu:
-        query_L = query_L.cuda()
-        retrieval_L = retrieval_L.cuda()
+
+    query_L = query_L.cuda()
+    retrieval_L = retrieval_L.cuda()
 
     mapi2t = calc_map_k(qBX, rBY, query_L, retrieval_L)
     mapt2i = calc_map_k(qBY, rBX, query_L, retrieval_L)
@@ -253,10 +247,10 @@ def split_data(images, tags, labels):
 
 def calc_neighbor(label1, label2):
     # calculate the similar matrix
-    if opt.use_gpu:
-        Sim = (label1.matmul(label2.transpose(0, 1)) > 0).type(torch.cuda.FloatTensor)
-    else:
-        Sim = (label1.matmul(label2.transpose(0, 1)) > 0).type(torch.FloatTensor)
+#     if opt.use_gpu:
+    Sim = (label1.matmul(label2.transpose(0, 1)) > 0).type(torch.cuda.FloatTensor)
+#     else:
+#         Sim = (label1.matmul(label2.transpose(0, 1)) > 0).type(torch.FloatTensor)
     return Sim
 
 
@@ -274,13 +268,11 @@ def generate_image_code(img_model, X, bit):
     num_data = X.shape[0]
     index = np.linspace(0, num_data - 1, num_data).astype(int)
     B = torch.zeros(num_data, bit, dtype=torch.float)
-    if opt.use_gpu:
-        B = B.cuda()
+    B = B.cuda()
     for i in tqdm(range(num_data // batch_size + 1)):
         ind = index[i * batch_size: min((i + 1) * batch_size, num_data)]
         image = X[ind].type(torch.float)
-        if opt.use_gpu:
-            image = image.cuda()
+        image = image.cuda()
         cur_f = img_model(image)
         B[ind, :] = cur_f.data
     B = torch.sign(B)
@@ -292,13 +284,11 @@ def generate_text_code(txt_model, Y, bit):
     num_data = Y.shape[0]
     index = np.linspace(0, num_data - 1, num_data).astype(int)
     B = torch.zeros(num_data, bit, dtype=torch.float)
-    if opt.use_gpu:
-        B = B.cuda()
+    B = B.cuda()
     for i in tqdm(range(num_data // batch_size + 1)):
         ind = index[i * batch_size: min((i + 1) * batch_size, num_data)]
         text = Y[ind].unsqueeze(1).unsqueeze(-1).type(torch.float)
-        if opt.use_gpu:
-            text = text.cuda()
+        text = text.cuda()
         cur_g = txt_model(text)
         B[ind, :] = cur_g.data
     B = torch.sign(B)
