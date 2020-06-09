@@ -230,9 +230,9 @@ def test(**kwargs):
 
 def split_data(images, tags, labels):
     X = {}
-    X['query'] = images[0: opt.query_size]
-    X['train'] = images[opt.query_size: opt.training_size + opt.query_size]
-    X['retrieval'] = images[opt.query_size: opt.query_size + opt.database_size]
+    X['query'] = images[0: opt.query_size,:,:,:]
+    X['train'] = images[opt.query_size: opt.training_size + opt.query_size,:,:,:]
+    X['retrieval'] = images[opt.query_size: opt.query_size + opt.database_size,:,:,:]
 
     Y = {}
     Y['query'] = tags[:,0: opt.query_size]
