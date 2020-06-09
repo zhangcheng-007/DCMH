@@ -76,7 +76,7 @@ def train(**kwargs):
 
             sample_L = Variable(train_L[ind, :])
 #             image = Variable(train_x[ind].type(torch.float))
-            image = Variable(train_x[ind])
+            image = Variable(train_x[ind,:,:,:])
             image = image.cuda()
             sample_L = sample_L.cuda()
             ones = ones.cuda()
