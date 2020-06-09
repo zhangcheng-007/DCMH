@@ -13,7 +13,7 @@ from utils import calc_map_k
 def train(**kwargs):
     opt.parse(kwargs)
 
-    os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpu
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     images, tags, labels = load_data(opt.data_path)
     pretrain_model = load_pretrain_model(opt.pretrain_model_path)
     y_dim = tags.shape[1]
