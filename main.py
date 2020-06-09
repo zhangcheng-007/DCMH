@@ -75,7 +75,8 @@ def train(**kwargs):
             unupdated_ind = np.setdiff1d(range(num_train), ind)
 
             sample_L = Variable(train_L[ind, :])
-            image = Variable(train_x[ind].type(torch.float))
+#             image = Variable(train_x[ind].type(torch.float))
+            image = Variable(train_x[ind])
             image = image.cuda()
             sample_L = sample_L.cuda()
             ones = ones.cuda()
