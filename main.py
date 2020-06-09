@@ -8,7 +8,7 @@ from torch.optim import SGD
 from tqdm import tqdm
 from models import ImgModule, TxtModule
 from utils import calc_map_k
-
+import os
 
 def train(**kwargs):
     opt.parse(kwargs)
